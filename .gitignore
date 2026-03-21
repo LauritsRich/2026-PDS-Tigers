@@ -1,0 +1,5 @@
+data/imgs/*
+!data/imgs/.gitkeep
+
+data/masks/*
+!data/masks/.gitkeep
