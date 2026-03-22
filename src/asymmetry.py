@@ -25,7 +25,10 @@ def safe_crop(mask):
     y0, y1 = y.min(), y.max()
     x0, x1 = x.min(), x.max()
     return mask[y0:y1+1, x0:x1+1]
-def extract_asymmetry(mask):
+def extract_asymmetry(image_id):
+    mask = load_mask(image_id)
+
+
     if mask is None:
         return np.nan
 

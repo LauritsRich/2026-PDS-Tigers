@@ -94,7 +94,9 @@ def extract_border_features(mask):
         "convexity": convexity_score(mask)
     }
 
-def border(image_path):
+def border(img_id):
+
+    image_path = '../data/' + "imgs/" + img_id
     img = cv2.imread(image_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
