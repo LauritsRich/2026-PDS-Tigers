@@ -34,7 +34,7 @@ def compactness_score(mask):
     struct_el = morphology.disk(2)
     mask_eroded = morphology.binary_erosion(mask, struct_el)
 
-    perimeter = mask - mask_eroded
+    perimeter = mask ^ mask_eroded
     l = np.sum(perimeter)
 
     if l == 0:
@@ -89,10 +89,8 @@ def get_mask(gray):
 
 def extract_border_features(mask):
 
-    return {
-        "compactness": compactness_score(mask),
-        "convexity": convexity_score(mask)
-    }
+    return [compactness_score(mask),convexity_score(mask)]
+    
 
 def border(img_id):
 
