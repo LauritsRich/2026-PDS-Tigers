@@ -3,3 +3,5 @@ data/imgs/*
 
 data/masks/*
 !data/masks/.gitkeep
+
+src/__pycache__/

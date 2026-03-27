@@ -73,7 +73,7 @@ def get_rgb_means(image, slic_segments):
         rgb_means (list): RGB mean values for each segment.
     '''
 
-    max_segment_id = np.unique(slic_segments)[-1]
+    max_segment_id = int(np.unique(slic_segments)[-1])
 
     rgb_means = []
     for i in range(1, max_segment_id + 1):
@@ -139,7 +139,7 @@ def get_hsv_means(image, slic_segments):
 
     hsv_image = rgb2hsv(image)
 
-    max_segment_id = np.unique(slic_segments)[-1]
+    max_segment_id = int(np.unique(slic_segments)[-1])
 
     hsv_means = []
     for i in range(1, max_segment_id + 1):
@@ -217,17 +217,36 @@ def color_features_extraction(image_id):
 
     h_var, s_var, v_var = hsv_var(image, slic_segments)
 
-
     hsv_means = get_hsv_means(image, slic_segments)
     hue_means = [hsv[0] for hsv in hsv_means]
+    v_means = [hsv[1] for hsv in hsv_means]
+    s_means = [hsv[2] for hsv in hsv_means]
 
-    circular_max_min_ = circular_max_min(hue_means)
+    rgb_means = get_rgb_means(image, slic_segments)
+    r_means = [rgb[0] for rgb in rgb_means]
+    g_means = [rgb[1] for rgb in rgb_means]
+    b_means = [rgb[2] for rgb in rgb_means]
+
+    circular_max_min_h = circular_max_min(hue_means)
     ##combine all variances together
     rgb_var_mag = np.sqrt(r_var**2 + g_var**2 + b_var**2)
     hsv_var_mag = np.sqrt(h_var**2 + s_var**2 + v_var**2)
-    h_sin = np.sin(np.mean(hue_means))
-    #### keep the hue distance, magnitude of the rgb and hsv variances and the circular 
-    return [h_sin, rgb_var_mag, hsv_var_mag, circular_max_min_]
+
+
+    rgb_var_mean = np.mean([r_var, g_var, b_var])
+    hsv_var_mean = np.mean([h_var, s_var, v_var])
+
+    h_sin = np.sin(np.mean(hue_means))### hue is circular thats why we use trigonometric function
+    v_value = np.mean(v_means)
+    s_value = np.mean(s_means)
+
+    r_value = np.mean(r_means)
+    g_value = np.mean(g_means)
+    b_value = np.mean(b_means)
+
+
+    #### keep the hue distance, magnitude of the rgb and hsv variances and the circular; return all posible features to see the ones that affect the most 
+    return [h_sin, s_value, v_value, r_value, g_value, b_value, h_var, s_var, v_var, r_var, g_var, b_var, hsv_var_mean, rgb_var_mean, hsv_var_mag, rgb_var_mag, circular_max_min_h]
 
 
     
