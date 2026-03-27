@@ -2,6 +2,12 @@ data/imgs/*
 !data/imgs/.gitkeep
 
 data/masks/*
+<<<<<<< HEAD
 !data/masks/.gitkeep
 
 src/__pycache__/
+=======
+!data/masks/.gitkeep.venv/
+__pycache__/
+*.pyc
+>>>>>>> 4cf247a85036c9f17375629dcbbf54d19659a798
