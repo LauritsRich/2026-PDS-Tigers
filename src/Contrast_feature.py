@@ -5,6 +5,8 @@ from skimage import io, color, feature
 def getContrast_value(img_dir):
     levels = 32
     for img_name in os.listdir(img_dir):
+        if img_name == ".gitkeep":
+            continue
         image = io.imread(os.path.join(img_dir, img_name))
         if image.ndim == 3 and image.shape[2] == 4:
             image = image[:, :, :3]
@@ -23,4 +25,5 @@ def getContrast_value(img_dir):
         average_contrast = np.mean(contrast_value) # Average contrast across the 4 angles
         print(f'Image: {img_name}, Contrast Value: {average_contrast}')
         
-getContrast_value(img_dir)
+        
+getContrast_value()
