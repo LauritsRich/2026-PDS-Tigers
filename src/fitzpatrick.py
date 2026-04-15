@@ -22,9 +22,3 @@ def fitzpatrick(patient_ids):
     else:
         # Step 7: if no match was found, return None
         return None
-
-# Step 8: call the function with a patient ID
-result = fitzpatrick(["PAT_756"])
-
-# Step 9: print the result
-print(result)
