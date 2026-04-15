@@ -68,18 +68,15 @@ def diameter_features(mask):
     area = coords.shape[0]
     equiv_diameter = np.sqrt(4 * area / np.pi)
 
-    # --- Maximum diameter using bounding-box diagonal (old method, fast) ---
+    
     y_min, x_min = coords.min(axis=0)
     y_max, x_max = coords.max(axis=0)
     max_diameter = np.sqrt((y_max - y_min)**2 + (x_max - x_min)**2)
 
     # --- Diameter irregularity ---
     diameter_irregularity = max_diameter / equiv_diameter if equiv_diameter != 0 else 0
+    return [diameter_irregularity(mask)]
 
-    return {
-        "equiv_diameter": equiv_diameter,
-        "diameter_irregularity": diameter_irregularity
-    }
 def diameter(img_id):
 
     image_path = '../data/' + "imgs/" + img_id
