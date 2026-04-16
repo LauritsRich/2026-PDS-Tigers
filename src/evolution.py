@@ -1,3 +1,5 @@
+import pandas as pd
+import numpy as np
 def to_binary_feature(value):
     
     if pd.isna(value):
@@ -26,8 +28,14 @@ def extract_features_fast(row):
     return feats
 
 def evolution_score_row(row):
-    cols = ["grew", "changed"]
-    vals = [row[c] for c in cols if pd.notna(row[c])]
-    if len(vals) == 0:
+    try:
+        vals=[]
+        for col in ["grew", "changed"]:
+            v = to_binary_feature(row.get(col, np.nan))
+            if not pd.isna(v):
+                vals.append(v)
+        if len(vals) == 0:
+            return np.nan
+        return float(np.sum(vals))
+    except:
         return np.nan
-    return np.sum(vals)

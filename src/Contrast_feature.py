@@ -2,12 +2,12 @@ import os
 import numpy as np
 from skimage import io, color, feature
 
-def getContrast_value(img_dir):
+def contrast(img_id):
     levels = 32
-    for img_name in os.listdir(img_dir):
-        if img_name == ".gitkeep":
-            continue
-        image = io.imread(os.path.join(img_dir, img_name))
+    try:
+        image_path = '../data/imgs/' + img_id
+        image = io.imread(image_path)
+        
         if image.ndim == 3 and image.shape[2] == 4:
             image = image[:, :, :3]
         # Step 1: Convert the images to grayscale:
@@ -22,8 +22,8 @@ def getContrast_value(img_dir):
 
         # Step 5: Calculating the contrast:
         contrast_value = feature.graycoprops(GLCM, prop = 'contrast')[0]
-        average_contrast = np.mean(contrast_value) # Average contrast across the 4 angles
-        print(f'Image: {img_name}, Contrast Value: {average_contrast}')
-        
-        
-getContrast_value()
+        average_contrast = float(np.mean(contrast_value))
+        # Average contrast across the 4 angles
+        return average_contrast
+    except:
+        return np.nan

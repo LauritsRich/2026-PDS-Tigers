@@ -59,12 +59,9 @@ def diameter_features(mask):
     # Get coordinates of lesion pixels
     coords = np.column_stack(np.nonzero(mask))
     if coords.shape[0] < 2:
-        return {
-            "equiv_diameter": 0,
-            "diameter_irregularity": 0
-        }
+        return 0.0
 
-    # --- Area-based features ---
+    # Area-based features
     area = coords.shape[0]
     equiv_diameter = np.sqrt(4 * area / np.pi)
 
@@ -73,9 +70,9 @@ def diameter_features(mask):
     y_max, x_max = coords.max(axis=0)
     max_diameter = np.sqrt((y_max - y_min)**2 + (x_max - x_min)**2)
 
-    # --- Diameter irregularity ---
+    # Diameter irregularity
     diameter_irregularity = max_diameter / equiv_diameter if equiv_diameter != 0 else 0
-    return [diameter_irregularity(mask)]
+    return float(diameter_irregularity)
 
 def diameter(img_id):
 
