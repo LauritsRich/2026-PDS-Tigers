@@ -17,7 +17,7 @@ from feature_GLCM_contrast import contrast
 data_path = '2026-PDS-Tigers/data'
 df = pd.read_csv(os.path.join(data_path, 'metadata.csv'))
 mask_dir = os.path.join(data_path, "masks")
-N_TEST = 800
+N_TEST = 2000
 
 necessary_df = df[
     df["img_id"].apply(lambda x: os.path.exists(f"{mask_dir}/{x.removesuffix('.png')}_mask.png"))
