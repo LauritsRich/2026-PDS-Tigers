@@ -12,20 +12,20 @@ def to_binary_feature(value):
             return 0
     return int(bool(value))
 
-def extract_features_fast(row):
-    img_id = row["img_id"]
+# def extract_features_fast(row):
+#     img_id = row["img_id"]
 
     
-    mask = load_mask(img_id, data_path)
-    asymmetry = get_asymmetry(mask)
+#     mask = load_mask(img_id, data_path)
+#     asymmetry = get_asymmetry(mask)
 
-    feats = {
-        "asymmetry": asymmetry,
-        "grew": to_binary_feature(row.get("grew", np.nan)),
-        "changed": to_binary_feature(row.get("changed", np.nan)),
-        "diagnostic": row["diagnostic"],
-    }
-    return feats
+#     feats = {
+#         "asymmetry": asymmetry,
+#         "grew": to_binary_feature(row.get("grew", np.nan)),
+#         "changed": to_binary_feature(row.get("changed", np.nan)),
+#         "diagnostic": row["diagnostic"],
+#     }
+#     return feats
 
 def evolution_score_row(row):
     try:

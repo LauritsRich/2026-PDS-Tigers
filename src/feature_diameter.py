@@ -1,7 +1,12 @@
+import os
 import numpy as np
 import cv2
 from scipy.spatial.distance import pdist
 import pandas as pd
+
+
+data_path = '2026-PDS-Tigers/data/'
+
 def removeHair_auto(img_org, img_gray):
 
     kernel_size = 5
@@ -76,7 +81,7 @@ def diameter_features(mask):
 
 def diameter(img_id):
 
-    image_path = '../data/' + "imgs/" + img_id
+    image_path = os.path.join(data_path, 'imgs', img_id)
     img = cv2.imread(image_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

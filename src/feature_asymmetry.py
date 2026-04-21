@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from skimage.transform import rotate
 
-data_path = '../data/'
+data_path = '2026-PDS-Tigers/data/'
 
 def load_mask(image_id, data_path=data_path):
     mask_path = data_path + "masks/"

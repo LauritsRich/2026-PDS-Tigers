@@ -2,10 +2,12 @@ import os
 import numpy as np
 from skimage import io, color, feature
 
+data_path = '2026-PDS-Tigers/data/'
+
 def contrast(img_id):
     levels = 32
     try:
-        image_path = '../data/imgs/' + img_id
+        image_path = os.path.join(data_path, 'imgs', img_id)
         image = io.imread(image_path)
         
         if image.ndim == 3 and image.shape[2] == 4:

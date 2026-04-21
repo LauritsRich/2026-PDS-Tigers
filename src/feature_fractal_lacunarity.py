@@ -7,6 +7,20 @@ import seaborn as sns
 # -----------------------------
 # CLEAN + CROP MASK
 # -----------------------------
+data_path = '2026-PDS-Tigers/data/'
+def load_mask(image_id, data_path=data_path):
+    mask_path = data_path + "masks/"
+    file_mask = (mask_path + image_id).replace(".png", "_mask.png")
+
+    
+    mask = cv2.imread(file_mask, cv2.IMREAD_GRAYSCALE)
+
+    if mask is None:
+        return None
+    
+    return mask
+
+
 def preprocess_mask(mask):
     mask = (mask > 127).astype(np.uint8) # Converts the gray-scale mask to binary (0 and 1)
 
@@ -64,31 +78,20 @@ def compute_lacunarity(mask, box_size):
 # -----------------------------
 # MAIN PIPELINE
 # -----------------------------
-def print_lacunarity_for_masks(mask_dir, box_size=4):
-    lac_values = []
+def lacunarity_for_masks(image_id, box_size=4):
+    
 
-    for filename in sorted(os.listdir(mask_dir)): # Loop through all files in the mask directory, sorted alphabetically. Sorting ensures that the output is consistent and easier to read.
+    mask = load_mask(image_id)
 
-        if not filename.lower().endswith((".png")): # Only process files that end with '.png'. If the file is not a PNG image, skip it.
-            continue
+    if mask is None:
+        return None
 
-        path = os.path.join(mask_dir, filename) # Construct the full path to the mask image by joining the directory path and the filename.
-        mask = cv2.imread(path, cv2.IMREAD_GRAYSCALE) # Read the mask image in grayscale mode. This will give us a 2D array where pixel values represent the intensity (0-255).
+    mask = preprocess_mask(mask)
 
-        if mask is None: # If the image could not be read, skip it.
-            continue
+    if mask is None:
+        return None
 
-        mask = preprocess_mask(mask) # Preprocess the mask to clean it and crop it to the bounding box of the lesion. This will make the lacunarity calculation more accurate and efficient.
+    lac = compute_lacunarity(mask, box_size)
 
-        if mask is None: # If the preprocessed mask is None, it means the original mask was empty (no lesion), so we skip it and print a message.
-            print(f"{filename} -> EMPTY MASK (skipped)")
-            continue
 
-        lac = compute_lacunarity(mask, box_size) # Compute the lacunarity of the preprocessed mask using the specified box size. 
-                                                 # This will give us a measure of the texture and heterogeneity of the lesion.
-
-        print(f"{filename} -> Lacunarity: {lac:.4f}")
-
-        lac_values.append(lac) # Append the computed lacunarity value to the list of lacunarity values for later analysis (plotting).
-
-    return lac_values
+    return lac

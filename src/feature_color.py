@@ -13,7 +13,7 @@ def safe_variance(values):
 
 
 
-data_path = '../data/'
+data_path = '2026-PDS-Tigers/data/'
 def load_image_and_mask(image_id, data_path=data_path):
     ''' Get the array corresponding to the image and the mask. 
     Remove transparency channel from the image array.   
@@ -303,7 +303,11 @@ def color_features_extraction(image_id):
     return [Ls_value, as_value, bs_value, mean_angle_h, s_value, v_value, r_value, g_value, b_value,Ls_var, as_var, bs_var, h_var, s_var, v_var, r_var, g_var, b_var, hsv_var_mean, rgb_var_mean, hsv_var_mag, rgb_var_mag, circular_max_min_h]
 
 
-    
+def safe_color_features_extraction(image_id):
+    try:
+        return color_features_extraction(image_id)
+    except ValueError:  # catches the "more dimensions than allowed" error
+        return np.nan
 
 
 

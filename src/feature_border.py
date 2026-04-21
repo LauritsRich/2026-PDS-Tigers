@@ -1,8 +1,12 @@
+import os
 import cv2
 import numpy as np
 from skimage import morphology
 from scipy.spatial import ConvexHull
 from math import pi
+
+
+data_path = '2026-PDS-Tigers/data/'
 
 def removeHair_auto(img_org, img_gray):
 
@@ -94,7 +98,7 @@ def extract_border_features(mask):
 
 def border(img_id):
 
-    image_path = '../data/' + "imgs/" + img_id
+    image_path =  os.path.join(data_path, 'imgs', img_id)
     img = cv2.imread(image_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
