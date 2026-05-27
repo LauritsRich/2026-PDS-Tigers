@@ -1,8 +1,11 @@
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
+#from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+import numpy as np
 from sklearn.metrics import roc_auc_score
 import pandas as pd
 import joblib
@@ -14,70 +17,70 @@ import pprint
 
 
 
-def svm_model_training(dev_x, dev_y):
+# def svm_model_training(dev_x, dev_y):
 
-    ### SVM Model Training
-    # Pipeline (scaling + SVM)
-    pipeline = Pipeline([
-        ('scaler', StandardScaler()),
-        ('svm', SVC(probability=True))
-    ])
+#     ### SVM Model Training
+#     # Pipeline (scaling + SVM)
+#     pipeline = Pipeline([
+#         ('scaler', StandardScaler()),
+#         ('svm', SVC(probability=True))
+#     ])
 
-    # Parameter grid
-    param_grid = {
-        'svm__C': [0.1, 1, 10, 100],
-        'svm__kernel': ['rbf'],
-        'svm__gamma': ['scale', 'auto', 0.01, 0.001]
-    }
+#     # Parameter grid
+#     param_grid = {
+#         'svm__C': [0.1, 1, 10, 100],
+#         'svm__kernel': ['rbf'],
+#         'svm__gamma': ['scale', 'auto', 0.01, 0.001]
+#     }
 
-    # GridSearchCV---> does the cross-validation, with the train/validation split
-    grid_search = GridSearchCV(
-        estimator=pipeline,
-        param_grid=param_grid,
-        cv=5,
-        scoring='roc_auc',
-        n_jobs=-1,
-        refit=False ## disable refitting so we can shoose our own model
-    )
+#     # GridSearchCV---> does the cross-validation, with the train/validation split
+#     grid_search = GridSearchCV(
+#         estimator=pipeline,
+#         param_grid=param_grid,
+#         cv=5,
+#         scoring='roc_auc',
+#         n_jobs=-1,
+#         refit=False ## disable refitting so we can shoose our own model
+#     )
 
-    # Train
-    grid_search.fit(dev_x, dev_y)
+#     # Train
+#     grid_search.fit(dev_x, dev_y)
 
-    ### In order to see how the hyperparameters influence the AUC score
+#     ### In order to see how the hyperparameters influence the AUC score
 
-    results_df = pd.DataFrame(grid_search.cv_results_)
-    score_table = results_df[['params','param_svm__C', 'param_svm__kernel', 'param_svm__gamma', 'mean_test_score', 'std_test_score']]
-    ### Sort them by the best mean AUC across the 5 folds
+#     results_df = pd.DataFrame(grid_search.cv_results_)
+#     score_table = results_df[['params','param_svm__C', 'param_svm__kernel', 'param_svm__gamma', 'mean_test_score', 'std_test_score']]
+#     ### Sort them by the best mean AUC across the 5 folds
 
-    score_table = score_table.copy()
-    score_table.loc[:, 'mean_test_score'] = score_table['mean_test_score'].round(4)
-    score_table.loc[:, 'std_test_score'] = score_table['std_test_score'].round(4)
+#     score_table = score_table.copy()
+#     score_table.loc[:, 'mean_test_score'] = score_table['mean_test_score'].round(4)
+#     score_table.loc[:, 'std_test_score'] = score_table['std_test_score'].round(4)
 
-    score_table_sorted = score_table.sort_values(by=['mean_test_score', 'std_test_score'], ascending=[False, True])
-    pprint.pprint(score_table_sorted.head(10))
-
-
-    #score_table_sorted.to_csv("2026-PDS-Tigers/results/models/parameters_svm.csv")
-
-    row = int(input("Select a row index for the parameters: "))
-
-    best_custom_params = score_table_sorted.iloc[row]['params']
-
-    # --- RESULTS ---
-    print("Selection Logic: Manually")
-    print("Chosen Params:", best_custom_params)
-    print(f"Best CV AUC: {score_table_sorted.iloc[row]['mean_test_score']}")
+#     score_table_sorted = score_table.sort_values(by=['mean_test_score', 'std_test_score'], ascending=[False, True])
+#     pprint.pprint(score_table_sorted.head(10))
 
 
-    SVM_model = pipeline.set_params(**best_custom_params)
-    SVM_model.fit(dev_x, dev_y)
+#     #score_table_sorted.to_csv("2026-PDS-Tigers/results/models/parameters_svm.csv")
+
+#     row = int(input("Select a row index for the parameters: "))
+
+#     best_custom_params = score_table_sorted.iloc[row]['params']
+
+#     # --- RESULTS ---
+#     print("Selection Logic: Manually")
+#     print("Chosen Params:", best_custom_params)
+#     print(f"Best CV AUC: {score_table_sorted.iloc[row]['mean_test_score']}")
 
 
-
-    return SVM_model
+#     SVM_model = pipeline.set_params(**best_custom_params)
+#     SVM_model.fit(dev_x, dev_y)
 
 
 
+#     return SVM_model
+
+
+##################### KNN ######################
 
 def knn_model_training(dev_x, dev_y):
 
@@ -138,24 +141,139 @@ def knn_model_training(dev_x, dev_y):
     KNN_model = pipeline.set_params(**best_custom_params)
     KNN_model.fit(dev_x, dev_y)
 
-
-
-
-    # results_df = pd.DataFrame(grid_search.cv_results_)
-    # score_table = results_df[['param_knn__n_neighbors', 'param_knn__weights', 'param_knn__metric', 'mean_test_score', 'std_test_score']]
-    # ### Sort them by the best mean AUC across the 5 folds
-    # score_table = score_table.sort_values(by='mean_test_score', ascending=False)
-    # score_table.to_csv("2026-PDS-Tigers/results/models/parameters_knn.csv")
-
-    # # --- RESULTS ---
-    # print("Best Params:", grid_search.best_params_)
-    # print(f"Best CV AUC: {grid_search.best_score_:.4f}")
-
-    # # Test evaluation
-    # KNN_model = grid_search.best_estimator_
-
-
     return KNN_model
+
+############## RANDOM FOREST #######################################
+
+def RF_model_training(dev_x, dev_y):
+
+    ### KNN Model Training
+    # Pipeline (scaling + RF)
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('rf', RandomForestClassifier())
+    ])
+
+    # Parameter grid
+    param_grid = {
+        "rf__n_estimators": [50, 100, 200],
+        "rf__max_depth": [None, 10, 20] ,
+        "rf__min_samples_split": [2, 5],
+        "rf__criterion": ["gini", "entropy"] ,
+
+    }
+
+    # GridSearchCV---> does the cross-validation, with the train/validation split
+    grid_search = GridSearchCV(
+        estimator=pipeline,
+        param_grid=param_grid,
+        cv=5,
+        scoring='roc_auc',
+        n_jobs=-1,
+        refit=False
+    )
+
+    # Train
+    grid_search.fit(dev_x, dev_y)
+
+
+        ### In order to see how the hyperparameters influence the AUC score
+
+    results_df = pd.DataFrame(grid_search.cv_results_)
+    score_table = results_df[['params','param_rf__n_estimators',  'param_rf__max_depth', 'param_rf__min_samples_split','param_rf__criterion', 'mean_test_score', 'std_test_score']]
+    ### Sort them by the best mean AUC across the 5 folds
+
+    score_table = score_table.copy()
+    score_table.loc[:, 'mean_test_score'] = score_table['mean_test_score'].round(4)
+    score_table.loc[:, 'std_test_score'] = score_table['std_test_score'].round(4)
+
+    score_table_sorted = score_table.sort_values(by=['mean_test_score', 'std_test_score'], ascending=[False, True])
+    pprint.pprint(score_table_sorted.head(10))
+
+
+    #score_table_sorted.to_csv("2026-PDS-Tigers/results/models/parameters_knn.csv")
+
+    row = int(input("Select a row index for the parameters: "))
+
+    best_custom_params = score_table_sorted.iloc[row]['params']
+
+    # --- RESULTS ---
+    print("Selection Logic: Manually")
+    print("Chosen Params:", best_custom_params)
+    print(f"Best CV AUC: {score_table_sorted.iloc[row]['mean_test_score']}")
+
+
+    RF_model = pipeline.set_params(**best_custom_params)
+    RF_model.fit(dev_x, dev_y)
+
+    return RF_model
+
+
+
+############## Logistic Regression #######################################
+
+def LG_model_training(dev_x, dev_y):
+
+    ### KNN Model Training
+    # Pipeline (scaling + RF)
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('lg', LogisticRegression())
+    ])
+
+    # Parameter grid
+    param_grid = {
+        'lg__C': [0.01, 0.1, 1, 10, 100],
+        'lg__class_weight': [None, 'balanced'],
+
+    }
+
+    # GridSearchCV---> does the cross-validation, with the train/validation split
+    grid_search = GridSearchCV(
+        estimator=pipeline,
+        param_grid=param_grid,
+        cv=5,
+        scoring='roc_auc',
+        n_jobs=-1,
+        refit=False
+    )
+
+    # Train
+    grid_search.fit(dev_x, dev_y)
+
+
+        ### In order to see how the hyperparameters influence the AUC score
+
+    results_df = pd.DataFrame(grid_search.cv_results_)
+    score_table = results_df[['params','param_lg__C','param_lg__class_weight', 'mean_test_score', 'std_test_score']]
+    ### Sort them by the best mean AUC across the 5 folds
+
+    score_table = score_table.copy()
+    score_table.loc[:, 'mean_test_score'] = score_table['mean_test_score'].round(4)
+    score_table.loc[:, 'std_test_score'] = score_table['std_test_score'].round(4)
+
+    score_table_sorted = score_table.sort_values(by=['mean_test_score', 'std_test_score'], ascending=[False, True])
+    pprint.pprint(score_table_sorted.head(10))
+
+
+    #score_table_sorted.to_csv("2026-PDS-Tigers/results/models/parameters_knn.csv")
+
+    row = int(input("Select a row index for the parameters: "))
+
+    best_custom_params = score_table_sorted.iloc[row]['params']
+
+    # --- RESULTS ---
+    print("Selection Logic: Manually")
+    print("Chosen Params:", best_custom_params)
+    print(f"Best CV AUC: {score_table_sorted.iloc[row]['mean_test_score']}")
+
+
+    LG_model = pipeline.set_params(**best_custom_params)
+    LG_model.fit(dev_x, dev_y)
+
+    return LG_model
+
+
 
 
 
@@ -167,15 +285,15 @@ def main(features_path, prediction_results_path, base_model_path, load_model, mo
     :param prediction_results_path: Path to save the output predictions of the model (e.g. ./result/predictions/predictions_MODEL.csv).
     :param base_model_path: Path to save or load the trained model (e.g. ./result/predictions/predictions_MODEL.csv).
     :param load_model: Boolean to train the model and save it to model_path if False, load it from model_path if True. 
-    :param model_type: String specifying the type of the model used for predictions. (KNN or SVM)
+    :param model_type: String specifying the type of the model used for predictions. (KNN or Random Forrest or Logistic Regression)
     :param extended_model: Boolean to use the extended features dataset if True, otherwise use the baseline features
     """
 
-    baseline_features = ['asymmetry','compactness','convexity','r_var','g_var','b_var', 'h_var', 's_var', 'v_var', 'cancerous']
+    baseline_features = ['img_id','asymmetry','compactness','convexity','r_var','g_var','b_var', 'h_var', 's_var', 'v_var', 'cancerous']
     # extended_features = ['asymmetry','compactness', 'as_value', 'as_var', 
     #                      'b_var', 'g_value', 'v_value', 'r_value', 'bs_var', 'h_var', 
     #                      's_var','s_value', 'g_var', 'bs_value', 'lacunarity','hsv_var_mean','rgb_var_mean', 'Ls_value', 'cancerous']
-    extended_features = ['as_value', 'as_var', 'asymmetry','b_var','bs_var','compactness','g_value', 'g_var','lacunarity','mean_angle_h','rgb_var_mag', 's_value','s_var', 'cancerous']
+    extended_features = ['img_id','as_value', 'as_var', 'asymmetry','b_var','bs_var','compactness','g_value', 'g_var','lacunarity','mean_angle_h','rgb_var_mag', 's_value','s_var', 'cancerous']
     # Select correct model path
     model_path = f"{base_model_path}_{model_type}_{'extended' if extended_model else 'baseline'}.pkl"
     prediction_path = f"{prediction_results_path}_{model_type}_{'extended' if extended_model else 'baseline'}.csv"
@@ -184,23 +302,34 @@ def main(features_path, prediction_results_path, base_model_path, load_model, mo
     selected_features = features_df[extended_features if extended_model else baseline_features]
     selected_features = selected_features.dropna()
 
-    x = selected_features.copy().drop('cancerous', axis = 1)
+    x = selected_features.copy().drop(['img_id','cancerous'], axis = 1)
     y = selected_features['cancerous'].copy()
+    ids = selected_features['img_id']
 
-    # split the dataset into training and testing sets.
-    dev_x, test_x, dev_y, test_y = train_test_split(
-    x, y, stratify=y, random_state=42, test_size=0.2)
 
     # Load or train model
     if load_model:
         model = joblib.load(model_path)
+        # if we load the model, we do not do the split, just load the dataset directly into testing
+        sample_idx = x.sample(n=500, random_state=0).index
+
+        test_x = x.loc[sample_idx]
+        test_y = y.loc[sample_idx]
+        test_ids = ids.loc[sample_idx]
+
     else:
-        if model_type == 'SVM':
-            model = svm_model_training(dev_x, dev_y)
+        # split the dataset into training and testing sets.
+        dev_x, test_x, dev_y, test_y, dev_ids, test_ids = train_test_split(
+        x, y, ids, stratify=y, random_state=42, test_size=0.2)
+
+        if model_type == 'RF':
+            model = RF_model_training(dev_x, dev_y)
         elif model_type == 'KNN':
             model = knn_model_training(dev_x, dev_y)
+        elif model_type == 'LG':
+            model = LG_model_training(dev_x, dev_y)
         else:
-            print('model should be either knn or svm')
+            print('model should be either knn or RF or LG')
 
         joblib.dump(model, model_path)
 
@@ -220,7 +349,7 @@ def main(features_path, prediction_results_path, base_model_path, load_model, mo
 
 
 
-    results_df = pd.DataFrame({'probability': y_probs, 'prediction': y_pred}, index=test_x.index)
+    results_df = pd.DataFrame({'img_id': test_ids, 'probability': np.round(y_probs, 4),'prediction': y_pred,  'actual': test_y}, index=test_x.index)
     results_df.to_csv(prediction_path)
 
 
@@ -230,7 +359,7 @@ if __name__ == "__main__":
     prediction_results_path = "2026-PDS-Tigers/results/predictions/predictions"
     base_model_path = "2026-PDS-Tigers/results/models/model"
     load_model = False
-    model_type = 'SVM'
-    extended_model = True
+    model_type = 'LG'
+    extended_model = False
 
     main(features_path, prediction_results_path, base_model_path, load_model, model_type, extended_model)

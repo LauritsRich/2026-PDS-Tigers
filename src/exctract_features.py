@@ -49,7 +49,7 @@ features_df['diameter'] = features_df['img_id'].apply(diameter)
 #features_df['evolution'] = features_df['img_id'].apply(evolution)
 
 #### Fitzpatrick extraction
-features_df['fitz'] = features_df['img_id'].apply(fitzpatrick)
+#features_df['fitz'] = features_df['img_id'].apply(fitzpatrick)
 
 #### Fractal lacunarity
 features_df['lacunarity'] = features_df['img_id'].apply(lacunarity_for_masks)
