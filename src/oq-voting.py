@@ -76,19 +76,6 @@ print(f"LG AUC:{auc_knn:.4f}")
 print(f"METHOD 1 AUC: {auc_1:.4f}")
 
 
-#### VOTING SYSTEM, METHOD 2: WEIGHTED AVERAGE
-
-
-avg_prob = (
-    0.2 * result['knn_probability'] +
-    0.6 * result['rf_probability'] +
-    0.2 * result['lg_probability']
-)
-
-auc_2 = roc_auc_score(result['actual'], avg_prob)
-print(f"METHOD 2 AUC: {auc_2:.4f}")
-
-
 #### VOTING SYSTEM, METHOD 3: MOST CONFIDENT
 result['most_confident'] = result[['knn_probability', 'rf_probability', 'lg_probability']].apply(
     lambda row: row.loc[(row - 0.5).abs().idxmax()],
